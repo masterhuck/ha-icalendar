@@ -4,7 +4,7 @@ Generates an iCalendar (.ics) link that you can use to view your Home Assistant 
 ## Installation
 ### HACS (recommended)
 1. [Install HACS](https://hacs.xyz/docs/setup/download), if you did not already
-2. [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=codyc1515&repository=ha-icalendar&category=integration)
+2. [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=chris-y&repository=ha-icalendar&category=integration)
 3. Press the Download button
 4. Add the following to your configuration.yaml file:
 
