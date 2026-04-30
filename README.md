@@ -3,60 +3,78 @@ Generates an iCalendar (.ics) link that you can use to view your Home Assistant 
 
 ## Installation
 ### HACS (recommended)
-1. [Install HACS](https://hacs.xyz/docs/setup/download), if you did not already
+1. [Install HACS](https://hacs.xyz/docs/setup/download), if you did not already.
 2. [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=chris-y&repository=ha-icalendar&category=integration)
-3. Press the Download button
-4. Add the following to your configuration.yaml file:
-
-   ```
-   icalendar:
-     calendars:
-       - entity_id: calendar.entity_id
-         secret: yourSuperSecret
-   ```
-
-There should be a "calendars" entry for all calendars that need remote access.
-
-5. Restart Home Assistant
+3. Press the Download button.
+4. Restart Home Assistant.
 
 ### Manually
-Copy all files in the *custom_components/icalendar* folder to your Home Assistant folder *config/custom_components/icalendar*.
+Copy all files in the `custom_components/icalendar` folder to your Home Assistant folder `config/custom_components/icalendar`.
 
-## Getting started
-In your preferred calendar application, input your iCalendar URL in the following format:
+## Setup
+1. Go to **Settings > Devices & Services > Integrations**.
+2. Add **iCalendar API**.
+3. Choose a `calendar.*` entity from the list.
 
-- Home Assistant URL - http://homeassistant.local:8123
-- iCalendar API path - /api/ics/
-- Calendar Entity Id - calendar.*entity_id*
-- Secret parameter - ?s=*secret*
+Each config entry maps to exactly one calendar entity and one secret.
 
-### Example
+## URL format
+The feed URL is now tied to the config entry ID:
 
-- http://*homeassistant.local:8123*/api/ics/calendar.*holidays*?s=*yourSuperSecret*
+- `/api/ics/<entry_id>/<secret>`
+
+In the integration reconfigure/options UI, both local and external URL variants are shown (if configured in Home Assistant). Secret rotation is available from reconfigure.
 
 ## Additional configuration
+Calendar color is taken from Home Assistant's calendar entity UI settings.
+Set it in the calendar entity settings and it will be emitted as `COLOR` in the ICS feed.
 
-You can add colours to both calendars and specific named events by adding them to your config.
-Colours are specified as [named CSS3 colours](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color).
-For example, to colour events for your bin calendar, you might use:
+## Configuration parameters
+- Setup:
+  - `calendar_entity_id`: Existing Home Assistant calendar entity to expose.
+- Reconfigure:
+  - `calendar_entity_id`: Change the selected calendar.
+  - `secret`: Optional new secret (minimum 20 chars). Leave blank to keep current secret.
+- Options:
+  - Read-only feed URL display only.
 
-```
-icalendar:
-  calendars:
-    - entity_id: calendar.bins
-      secret: yourSuperSecret
-      colour: black
-  colours:
-    - name: "Recycling"
-      colour: green
-    - name: "Food waste"
-      colour: brown
-```
+## Installation parameters
+- Home Assistant `internal_url` and/or `external_url` should be configured to display full feed URLs in UI.
+- The selected calendar entity must be loaded and available at setup/reconfigure time.
 
-This will colour the event "Recycling" as green, "Food waste" as brown and the calendar itself (usually this is used as the default event colour) as black.
+## Supported functionality
+- Provides a secure iCalendar feed endpoint:
+  - `GET /api/ics/<config_entry_id>/<secret>`
+- Exports calendar events from the selected Home Assistant calendar entity.
+- Emits calendar-level `COLOR` from Home Assistant calendar UI color settings when available.
 
-## Known issues
-- Line length is not restricted to 75 characters
+## Data update behavior
+- Data is fetched on-demand per HTTP request via Home Assistant `calendar.get_events`.
+- Time window returned is 4 weeks of history and 52 weeks in the future.
 
-## Future enhancements
-Your support is welcomed.
+## Use cases
+- Subscribe to Home Assistant calendars from external calendar clients that support ICS URLs.
+- Share read-only calendar timelines using per-entry secrets.
+
+## Example
+- `https://home.example.com/api/ics/01ABCDEF1234567890/your_long_secret`
+
+## Known limitations
+- Feed security is URL-secret based; URLs should be treated as credentials.
+- Calendar data is read at request time; response latency depends on calendar backend responsiveness.
+
+## Troubleshooting
+- `401 Unauthorized`: URL secret does not match the config entry secret.
+- `403 Forbidden`: Invalid path/secret format or non-calendar entity.
+- `404 Not Found`: Entry ID or calendar entity does not exist, or no events returned.
+- If UI does not show full feed URLs, set `internal_url` / `external_url` in Home Assistant network settings.
+
+## Removal instructions
+1. Go to **Settings > Devices & Services > Integrations**.
+2. Open **iCalendar API**.
+3. Delete the config entry.
+4. Update/remove ICS subscriptions that used that entry URL.
+
+## Security notes
+- Secret checks use constant-time comparison.
+- iCalendar output now escapes reserved characters and folds long lines to improve parser safety and compatibility.

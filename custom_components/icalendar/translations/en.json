@@ -1,0 +1,41 @@
+{
+  "title": "iCalendar API",
+  "config": {
+    "abort": {
+      "already_configured": "This calendar is already configured.",
+      "reconfigure_successful": "Reconfiguration successful."
+    },
+    "error": {
+      "invalid_secret": "Secret must be at least 20 characters.",
+      "entity_not_found": "Selected calendar entity is unavailable. Ensure it is loaded and try again."
+    },
+    "step": {
+      "user": {
+        "title": "Add iCalendar feed",
+        "description": "Create a secure iCalendar URL for a Home Assistant calendar entity.",
+        "data": {
+          "calendar_entity_id": "Calendar entity"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure iCalendar feed",
+        "description": "{url_block}\n\nLeave secret key empty to keep the existing one.",
+        "data": {
+          "calendar_entity_id": "Calendar entity",
+          "secret": "New secret key (optional; minimum 20 chars)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "iCalendar feed settings",
+        "description": "{url_block}",
+        "data": {
+          "secret": "New secret key (optional; minimum 20 chars)"
+        }
+      }
+    }
+  }
+}
