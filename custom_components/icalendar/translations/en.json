@@ -11,6 +11,11 @@
       "invalid_blocklist": "Blocklist must be a valid regular expression.",
       "entity_not_found": "Selected calendar entity is unavailable. Ensure it is loaded and try again."
     },
+    "url_labels": {
+      "local_url": "Local URL",
+      "external_url": "External URL",
+      "feed_path": "Feed path"
+    },
     "step": {
       "user": {
         "title": "Add iCalendar feed",
@@ -25,7 +30,7 @@
       },
       "reconfigure": {
         "title": "Reconfigure iCalendar feed",
-        "description": "{url_block}\n\nLeave secret key empty to keep the existing one.",
+        "description": "{url_info}\n\nLeave secret key empty to keep the existing one.",
         "data": {
           "calendar_entity_id": "Calendar entity",
           "secret": "New secret key (optional; minimum 20 chars)",
@@ -41,7 +46,7 @@
     "step": {
       "init": {
         "title": "iCalendar feed settings",
-        "description": "{url_block}",
+        "description": "{url_info}",
         "data": {
           "secret": "New secret key (optional; minimum 20 chars)",
           "allowlist": "Allowlist regex (optional)",

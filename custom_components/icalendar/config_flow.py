@@ -11,6 +11,7 @@ from homeassistant import config_entries
 from homeassistant.config_entries import SOURCE_USER, FlowType
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import selector
+from homeassistant.helpers.translation import async_get_translations
 
 from .const import (
     CONF_ALLOWLIST,
@@ -63,17 +64,28 @@ def _build_feed_urls(
     return local_url, external_url, path
 
 
-def _build_urls_text(local_url: str, external_url: str, path: str = "") -> str:
-    """Create URL description block with only available URLs."""
+async def _build_url_info(
+    hass: HomeAssistant,
+    local_url: str,
+    external_url: str,
+    path: str,
+) -> str:
+    """Build translated URL info block, showing only lines with a value."""
+    translations = await async_get_translations(
+        hass, hass.config.language, "config", integrations=[DOMAIN]
+    )
+    prefix = f"component.{DOMAIN}.config.url_labels"
+    label_local = translations.get(f"{prefix}.local_url", "Local URL")
+    label_external = translations.get(f"{prefix}.external_url", "External URL")
+    label_path = translations.get(f"{prefix}.feed_path", "Feed path")
+
     lines: list[str] = []
     if local_url:
-        lines.append(f"Current local URL:\n{local_url}")
+        lines.append(f"{label_local}: {local_url}")
     if external_url:
-        lines.append(f"Current external URL:\n{external_url}")
-    if not lines and path:
-        lines.append(
-            f"No base URL configured in Home Assistant.\nYour feed path is:\n{path}"
-        )
+        lines.append(f"{label_external}: {external_url}")
+    if not lines:
+        lines.append(f"{label_path}: {path}")
     return "\n".join(lines)
 
 
@@ -182,7 +194,9 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data_schema=_build_reconfigure_schema(entry),
                     errors=errors,
                     description_placeholders={
-                        "url_block": _build_urls_text(local_url, external_url, path),
+                        "url_info": await _build_url_info(
+                            self.hass, local_url, external_url, path
+                        ),
                     },
                 )
 
@@ -220,7 +234,9 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data_schema=_build_reconfigure_schema(entry),
                     errors=errors,
                     description_placeholders={
-                        "url_block": _build_urls_text(local_url, external_url, path),
+                        "url_info": await _build_url_info(
+                            self.hass, local_url, external_url, path
+                        ),
                     },
                 )
 
@@ -236,7 +252,9 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="reconfigure",
             data_schema=_build_reconfigure_schema(entry),
             description_placeholders={
-                "url_block": _build_urls_text(local_url, external_url, path),
+                "url_info": await _build_url_info(
+                    self.hass, local_url, external_url, path
+                ),
             },
         )
 
@@ -274,7 +292,9 @@ class ICalendarOptionsFlow(config_entries.OptionsFlow):
                     data_schema=_build_options_schema(self.config_entry),
                     errors=errors,
                     description_placeholders={
-                        "url_block": _build_urls_text(local_url, external_url, path),
+                        "url_info": await _build_url_info(
+                            self.hass, local_url, external_url, path
+                        ),
                     },
                 )
 
@@ -303,7 +323,9 @@ class ICalendarOptionsFlow(config_entries.OptionsFlow):
             step_id="init",
             data_schema=_build_options_schema(self.config_entry),
             description_placeholders={
-                "url_block": _build_urls_text(local_url, external_url, path),
+                "url_info": await _build_url_info(
+                    self.hass, local_url, external_url, path
+                ),
             },
         )
 
