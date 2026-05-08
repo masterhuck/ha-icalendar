@@ -1,0 +1,60 @@
+{
+    "title": "iCalendar API",
+    "config": {
+        "abort": {
+            "already_configured": "Dieser Kalender ist bereits konfiguriert.",
+            "reconfigure_successful": "Neukonfiguration erfolgreich."
+        },
+        "error": {
+            "invalid_secret": "Der geheime Schlüssel muss mindestens 20 Zeichen lang sein.",
+            "invalid_allowlist": "Die Allowlist muss ein gültiger regulärer Ausdruck sein.",
+            "invalid_blocklist": "Die Blocklist muss ein gültiger regulärer Ausdruck sein.",
+            "entity_not_found": "Die ausgewählte Kalender-Entität ist nicht verfügbar. Stelle sicher, dass sie geladen ist, und versuche es erneut."
+        },
+        "url_labels": {
+            "local_url": "Lokale URL",
+            "external_url": "Externe URL",
+            "feed_path": "Feed-Pfad"
+        },
+        "step": {
+            "user": {
+                "title": "iCalendar-Feed hinzufügen",
+                "description": "Erstelle eine sichere iCalendar-URL für eine Home Assistant Kalender-Entität.",
+                "data": {
+                    "calendar_entity_id": "Kalender-Entität",
+                    "allowlist": "Allowlist-Regex (optional)",
+                    "blocklist": "Blocklist-Regex (optional)",
+                    "history_weeks": "Vergangenheit (Wochen)",
+                    "future_weeks": "Zukunft (Wochen)"
+                }
+            },
+            "reconfigure": {
+                "title": "iCalendar-Feed neu konfigurieren",
+                "description": "{url_info}\n\nGeheimen Schlüssel leer lassen, um den bestehenden zu behalten.",
+                "data": {
+                    "calendar_entity_id": "Kalender-Entität",
+                    "secret": "Neuer geheimer Schlüssel (optional; mindestens 20 Zeichen)",
+                    "allowlist": "Allowlist-Regex (optional)",
+                    "blocklist": "Blocklist-Regex (optional)",
+                    "history_weeks": "Vergangenheit (Wochen)",
+                    "future_weeks": "Zukunft (Wochen)"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "iCalendar-Feed-Einstellungen",
+                "description": "{url_info}",
+                "data": {
+                    "secret": "Neuer geheimer Schlüssel (optional; mindestens 20 Zeichen)",
+                    "allowlist": "Allowlist-Regex (optional)",
+                    "blocklist": "Blocklist-Regex (optional)",
+                    "history_weeks": "Vergangenheit (Wochen)",
+                    "future_weeks": "Zukunft (Wochen)"
+                }
+            }
+        }
+    }
+}
