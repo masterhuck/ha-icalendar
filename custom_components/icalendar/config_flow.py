@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import secrets
+from collections.abc import Mapping
 
 import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.config_entries import SOURCE_USER, FlowType
 from homeassistant.core import HomeAssistant

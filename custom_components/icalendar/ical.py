@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from datetime import date, datetime
-import re
 from typing import Any
 
-from ical.calendar import Calendar
-from ical.calendar_stream import IcsCalendarStream
-from ical.event import Event
 from homeassistant.components import frontend
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
+from ical.calendar import Calendar
+from ical.calendar_stream import IcsCalendarStream
+from ical.event import Event
 
 
 def build_icalendar(

@@ -6,10 +6,24 @@ homeassistant:
   debug: true
 
 icalendar:
-  secret: myS00perS3c3tStr1ng
+  calendars:
+    - entity_id: calendar.sms
+      secret: test
+      colour: black
+  colours:
+    - name: "Recycling"
+      colour: green
+    - name: "Food waste"
+      colour: brown
 
 # https://www.home-assistant.io/integrations/logger/
 logger:
   default: info
   logs:
     custom_components.icalendar: debug
+
+debugpy:
+  host: localhost # Optional
+  port: 5678 # Optional
+  start: true
+  wait: true  # Force wait for remote debugging

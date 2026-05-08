@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
+from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
-from homeassistant.components.diagnostics import async_redact_data
 
 from .const import CONF_CALENDAR_ENTITY_ID, CONF_SECRET
 

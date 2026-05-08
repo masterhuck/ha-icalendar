@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from http import HTTPStatus
 import hmac
+from http import HTTPStatus
 from typing import Any
 
 from aiohttp import web
-
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
 
