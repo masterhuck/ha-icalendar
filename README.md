@@ -32,11 +32,17 @@ Set it in the calendar entity settings and it will be emitted as `COLOR` in the 
 ## Configuration parameters
 - Setup:
   - `calendar_entity_id`: Existing Home Assistant calendar entity to expose.
+  - `allowlist`: Optional regex applied to event summary only. Only matching events are included.
+  - `blocklist`: Optional regex applied to event summary only. Matching events are excluded when no allowlist is set.
 - Reconfigure:
   - `calendar_entity_id`: Change the selected calendar.
   - `secret`: Optional new secret (minimum 20 chars). Leave blank to keep current secret.
+  - `allowlist`: Optional regex applied to event summary only. Takes precedence over blocklist when both are set.
+  - `blocklist`: Optional regex applied to event summary only. Used only when allowlist is empty.
 - Options:
-  - Read-only feed URL display only.
+  - `secret`: Optional new secret (minimum 20 chars). Leave blank to keep current secret.
+  - `allowlist`: Optional regex applied to event summary only. Takes precedence over blocklist when both are set.
+  - `blocklist`: Optional regex applied to event summary only. Used only when allowlist is empty.
 
 ## Installation parameters
 - Home Assistant `internal_url` and/or `external_url` should be configured to display full feed URLs in UI.

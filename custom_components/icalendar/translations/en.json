@@ -7,6 +7,8 @@
     },
     "error": {
       "invalid_secret": "Secret must be at least 20 characters.",
+      "invalid_allowlist": "Allowlist must be a valid regular expression.",
+      "invalid_blocklist": "Blocklist must be a valid regular expression.",
       "entity_not_found": "Selected calendar entity is unavailable. Ensure it is loaded and try again."
     },
     "step": {
@@ -14,7 +16,9 @@
         "title": "Add iCalendar feed",
         "description": "Create a secure iCalendar URL for a Home Assistant calendar entity.",
         "data": {
-          "calendar_entity_id": "Calendar entity"
+          "calendar_entity_id": "Calendar entity",
+          "allowlist": "Allowlist regex (optional)",
+          "blocklist": "Blocklist regex (optional)"
         }
       },
       "reconfigure": {
@@ -22,7 +26,9 @@
         "description": "{url_block}\n\nLeave secret key empty to keep the existing one.",
         "data": {
           "calendar_entity_id": "Calendar entity",
-          "secret": "New secret key (optional; minimum 20 chars)"
+          "secret": "New secret key (optional; minimum 20 chars)",
+          "allowlist": "Allowlist regex (optional)",
+          "blocklist": "Blocklist regex (optional)"
         }
       }
     }
@@ -33,7 +39,9 @@
         "title": "iCalendar feed settings",
         "description": "{url_block}",
         "data": {
-          "secret": "New secret key (optional; minimum 20 chars)"
+          "secret": "New secret key (optional; minimum 20 chars)",
+          "allowlist": "Allowlist regex (optional)",
+          "blocklist": "Blocklist regex (optional)"
         }
       }
     }

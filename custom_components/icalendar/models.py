@@ -11,3 +11,5 @@ class ICalendarRuntimeData:
 
     calendar_entity_id: str
     secret: str
+    allowlist: str | None
+    blocklist: str | None

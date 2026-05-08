@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hmac
+import re
 from http import HTTPStatus
 from typing import Any
 
@@ -25,7 +26,9 @@ class ICalendarView(HomeAssistantView):
     def __init__(self, hass: HomeAssistant) -> None:
         self.hass = hass
 
-    async def get(self, request: web.Request, entry_id: str, secret: str) -> web.Response:
+    async def get(
+        self, request: web.Request, entry_id: str, secret: str
+    ) -> web.Response:
         """Handle iCalendar feed requests."""
         entry = self.hass.config_entries.async_get_entry(entry_id)
         if entry is None or entry.domain != DOMAIN:
@@ -33,13 +36,17 @@ class ICalendarView(HomeAssistantView):
 
         runtime_data = getattr(entry, "runtime_data", None)
         if runtime_data is None or not isinstance(runtime_data, ICalendarRuntimeData):
-            return web.Response(body="503: Service Unavailable", status=HTTPStatus.SERVICE_UNAVAILABLE)
+            return web.Response(
+                body="503: Service Unavailable", status=HTTPStatus.SERVICE_UNAVAILABLE
+            )
 
         if not secret or not runtime_data.secret:
             return web.Response(body="403: Forbidden", status=HTTPStatus.FORBIDDEN)
 
         if not hmac.compare_digest(str(secret), str(runtime_data.secret)):
-            return web.Response(body="401: Unauthorized", status=HTTPStatus.UNAUTHORIZED)
+            return web.Response(
+                body="401: Unauthorized", status=HTTPStatus.UNAUTHORIZED
+            )
 
         entity_id = runtime_data.calendar_entity_id
         if not entity_id.startswith("calendar."):
@@ -52,6 +59,12 @@ class ICalendarView(HomeAssistantView):
         events = await self._fetch_events(entity_id)
         if events is None:
             return web.Response(body="404: Not Found", status=HTTPStatus.NOT_FOUND)
+
+        events = self._filter_events(
+            events,
+            allowlist=runtime_data.allowlist,
+            blocklist=runtime_data.blocklist,
+        )
 
         feed = build_icalendar(self.hass, entity_id, state.name, events)
         return web.Response(body=feed, content_type=CONTENT_TYPE_ICAL, charset="utf-8")
@@ -78,3 +91,39 @@ class ICalendarView(HomeAssistantView):
         if not events_response or entity_id not in events_response:
             return None
         return events_response[entity_id].get("events", [])
+
+    def _filter_events(
+        self,
+        events: list[dict[str, Any]],
+        allowlist: str | None,
+        blocklist: str | None,
+    ) -> list[dict[str, Any]]:
+        """Filter events using optional regex allowlist/blocklist rules."""
+        allow_pattern = self._compile_regex(allowlist)
+        block_pattern = self._compile_regex(blocklist)
+
+        if allow_pattern:
+            return [
+                event
+                for event in events
+                if allow_pattern.search(str(event.get("summary") or ""))
+            ]
+
+        if block_pattern:
+            return [
+                event
+                for event in events
+                if not block_pattern.search(str(event.get("summary") or ""))
+            ]
+
+        return events
+
+    @staticmethod
+    def _compile_regex(pattern: str | None) -> re.Pattern[str] | None:
+        """Compile regex pattern and ignore invalid values."""
+        if not pattern:
+            return None
+        try:
+            return re.compile(pattern)
+        except re.error:
+            return None
