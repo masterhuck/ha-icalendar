@@ -13,3 +13,5 @@ class ICalendarRuntimeData:
     secret: str
     allowlist: str | None
     blocklist: str | None
+    history_weeks: int
+    future_weeks: int

@@ -18,7 +18,9 @@
         "data": {
           "calendar_entity_id": "Calendar entity",
           "allowlist": "Allowlist regex (optional)",
-          "blocklist": "Blocklist regex (optional)"
+          "blocklist": "Blocklist regex (optional)",
+          "history_weeks": "History (weeks)",
+          "future_weeks": "Future (weeks)"
         }
       },
       "reconfigure": {
@@ -28,7 +30,9 @@
           "calendar_entity_id": "Calendar entity",
           "secret": "New secret key (optional; minimum 20 chars)",
           "allowlist": "Allowlist regex (optional)",
-          "blocklist": "Blocklist regex (optional)"
+          "blocklist": "Blocklist regex (optional)",
+          "history_weeks": "History (weeks)",
+          "future_weeks": "Future (weeks)"
         }
       }
     }
@@ -41,7 +45,9 @@
         "data": {
           "secret": "New secret key (optional; minimum 20 chars)",
           "allowlist": "Allowlist regex (optional)",
-          "blocklist": "Blocklist regex (optional)"
+          "blocklist": "Blocklist regex (optional)",
+          "history_weeks": "History (weeks)",
+          "future_weeks": "Future (weeks)"
         }
       }
     }

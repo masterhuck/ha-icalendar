@@ -56,7 +56,11 @@ class ICalendarView(HomeAssistantView):
         if state is None:
             return web.Response(body="404: Not Found", status=HTTPStatus.NOT_FOUND)
 
-        events = await self._fetch_events(entity_id)
+        events = await self._fetch_events(
+            entity_id,
+            history_weeks=runtime_data.history_weeks,
+            future_weeks=runtime_data.future_weeks,
+        )
         if events is None:
             return web.Response(body="404: Not Found", status=HTTPStatus.NOT_FOUND)
 
@@ -69,13 +73,17 @@ class ICalendarView(HomeAssistantView):
         feed = build_icalendar(self.hass, entity_id, state.name, events)
         return web.Response(body=feed, content_type=CONTENT_TYPE_ICAL, charset="utf-8")
 
-    async def _fetch_events(self, entity_id: str) -> list[dict[str, Any]] | None:
+    async def _fetch_events(
+        self,
+        entity_id: str,
+        history_weeks: int,
+        future_weeks: int,
+    ) -> list[dict[str, Any]] | None:
         """Fetch events from Home Assistant calendar service."""
         from datetime import datetime, timedelta, timezone
-        from .const import DEFAULT_FUTURE_WEEKS, DEFAULT_HISTORY_WEEKS
 
-        start = datetime.now(timezone.utc) - timedelta(weeks=DEFAULT_HISTORY_WEEKS)
-        end = datetime.now(timezone.utc) + timedelta(weeks=DEFAULT_FUTURE_WEEKS)
+        start = datetime.now(timezone.utc) - timedelta(weeks=history_weeks)
+        end = datetime.now(timezone.utc) + timedelta(weeks=future_weeks)
 
         events_response = await self.hass.services.async_call(
             "calendar",

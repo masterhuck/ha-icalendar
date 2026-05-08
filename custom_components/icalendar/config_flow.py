@@ -16,7 +16,11 @@ from .const import (
     CONF_ALLOWLIST,
     CONF_BLOCKLIST,
     CONF_CALENDAR_ENTITY_ID,
+    CONF_FUTURE_WEEKS,
+    CONF_HISTORY_WEEKS,
     CONF_SECRET,
+    DEFAULT_FUTURE_WEEKS,
+    DEFAULT_HISTORY_WEEKS,
     DOMAIN,
     NAME,
     URL_PATH_PREFIX,
@@ -128,6 +132,12 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_SECRET: secret,
                 CONF_ALLOWLIST: allowlist,
                 CONF_BLOCKLIST: blocklist,
+                CONF_HISTORY_WEEKS: user_input.get(
+                    CONF_HISTORY_WEEKS, DEFAULT_HISTORY_WEEKS
+                ),
+                CONF_FUTURE_WEEKS: user_input.get(
+                    CONF_FUTURE_WEEKS, DEFAULT_FUTURE_WEEKS
+                ),
             }
 
             return self.async_create_entry(
@@ -185,6 +195,12 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 CONF_CALENDAR_ENTITY_ID: selected_entity,
                 CONF_ALLOWLIST: allowlist,
                 CONF_BLOCKLIST: blocklist,
+                CONF_HISTORY_WEEKS: user_input.get(
+                    CONF_HISTORY_WEEKS, DEFAULT_HISTORY_WEEKS
+                ),
+                CONF_FUTURE_WEEKS: user_input.get(
+                    CONF_FUTURE_WEEKS, DEFAULT_FUTURE_WEEKS
+                ),
             }
 
             new_secret = user_input.get(CONF_SECRET)
@@ -262,6 +278,12 @@ class ICalendarOptionsFlow(config_entries.OptionsFlow):
                 **self.config_entry.data,
                 CONF_ALLOWLIST: allowlist,
                 CONF_BLOCKLIST: blocklist,
+                CONF_HISTORY_WEEKS: user_input.get(
+                    CONF_HISTORY_WEEKS, DEFAULT_HISTORY_WEEKS
+                ),
+                CONF_FUTURE_WEEKS: user_input.get(
+                    CONF_FUTURE_WEEKS, DEFAULT_FUTURE_WEEKS
+                ),
             }
             if new_secret:
                 updated_data[CONF_SECRET] = new_secret
@@ -305,6 +327,22 @@ def _build_user_schema(user_input: Mapping[str, str] | None = None) -> vol.Schem
                 CONF_BLOCKLIST,
                 default=(user_input.get(CONF_BLOCKLIST, "") if user_input else ""),
             ): str,
+            vol.Optional(
+                CONF_HISTORY_WEEKS,
+                default=int(
+                    user_input.get(CONF_HISTORY_WEEKS, DEFAULT_HISTORY_WEEKS)
+                    if user_input
+                    else DEFAULT_HISTORY_WEEKS
+                ),
+            ): int,
+            vol.Optional(
+                CONF_FUTURE_WEEKS,
+                default=int(
+                    user_input.get(CONF_FUTURE_WEEKS, DEFAULT_FUTURE_WEEKS)
+                    if user_input
+                    else DEFAULT_FUTURE_WEEKS
+                ),
+            ): int,
         }
     )
 
@@ -326,6 +364,14 @@ def _build_reconfigure_schema(entry: config_entries.ConfigEntry) -> vol.Schema:
             vol.Optional(
                 CONF_BLOCKLIST, default=entry.data.get(CONF_BLOCKLIST, "") or ""
             ): str,
+            vol.Optional(
+                CONF_HISTORY_WEEKS,
+                default=int(entry.data.get(CONF_HISTORY_WEEKS, DEFAULT_HISTORY_WEEKS)),
+            ): int,
+            vol.Optional(
+                CONF_FUTURE_WEEKS,
+                default=int(entry.data.get(CONF_FUTURE_WEEKS, DEFAULT_FUTURE_WEEKS)),
+            ): int,
         }
     )
 
@@ -341,5 +387,13 @@ def _build_options_schema(entry: config_entries.ConfigEntry) -> vol.Schema:
             vol.Optional(
                 CONF_BLOCKLIST, default=entry.data.get(CONF_BLOCKLIST, "") or ""
             ): str,
+            vol.Optional(
+                CONF_HISTORY_WEEKS,
+                default=int(entry.data.get(CONF_HISTORY_WEEKS, DEFAULT_HISTORY_WEEKS)),
+            ): int,
+            vol.Optional(
+                CONF_FUTURE_WEEKS,
+                default=int(entry.data.get(CONF_FUTURE_WEEKS, DEFAULT_FUTURE_WEEKS)),
+            ): int,
         }
     )

@@ -11,7 +11,11 @@ from .const import (
     CONF_ALLOWLIST,
     CONF_BLOCKLIST,
     CONF_CALENDAR_ENTITY_ID,
+    CONF_FUTURE_WEEKS,
+    CONF_HISTORY_WEEKS,
     CONF_SECRET,
+    DEFAULT_FUTURE_WEEKS,
+    DEFAULT_HISTORY_WEEKS,
     DOMAIN,
 )
 from .http import ICalendarView
@@ -38,6 +42,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         secret=entry.data[CONF_SECRET],
         allowlist=entry.data.get(CONF_ALLOWLIST),
         blocklist=entry.data.get(CONF_BLOCKLIST),
+        history_weeks=int(entry.data.get(CONF_HISTORY_WEEKS, DEFAULT_HISTORY_WEEKS)),
+        future_weeks=int(entry.data.get(CONF_FUTURE_WEEKS, DEFAULT_FUTURE_WEEKS)),
     )
     return True
 
