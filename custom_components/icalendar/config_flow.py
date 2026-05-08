@@ -50,26 +50,30 @@ def _validate_regex(value: str | None) -> bool:
 
 def _build_feed_urls(
     hass: HomeAssistant, entry_id: str, secret: str
-) -> tuple[str, str]:
+) -> tuple[str, str, str]:
     """Build local/internal and external URLs where available."""
     path = f"{URL_PATH_PREFIX}/{entry_id}/{secret}"
 
     local_base = hass.config.internal_url or ""
     external_base = hass.config.external_url or ""
 
-    local_url = f"{local_base}{path}" if local_base else ""
-    external_url = f"{external_base}{path}" if external_base else ""
+    local_url = f"{local_base.rstrip('/')}{path}" if local_base else ""
+    external_url = f"{external_base.rstrip('/')}{path}" if external_base else ""
 
-    return local_url, external_url
+    return local_url, external_url, path
 
 
-def _build_urls_text(local_url: str, external_url: str) -> str:
+def _build_urls_text(local_url: str, external_url: str, path: str = "") -> str:
     """Create URL description block with only available URLs."""
     lines: list[str] = []
     if local_url:
         lines.append(f"Current local URL:\n{local_url}")
     if external_url:
         lines.append(f"Current external URL:\n{external_url}")
+    if not lines and path:
+        lines.append(
+            f"No base URL configured in Home Assistant.\nYour feed path is:\n{path}"
+        )
     return "\n".join(lines)
 
 
@@ -155,7 +159,7 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         existing_secret = entry.data.get(CONF_SECRET, "")
-        local_url, external_url = _build_feed_urls(
+        local_url, external_url, path = _build_feed_urls(
             self.hass, entry.entry_id, existing_secret
         )
         if user_input is not None:
@@ -178,7 +182,7 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data_schema=_build_reconfigure_schema(entry),
                     errors=errors,
                     description_placeholders={
-                        "url_block": _build_urls_text(local_url, external_url),
+                        "url_block": _build_urls_text(local_url, external_url, path),
                     },
                 )
 
@@ -216,7 +220,7 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     data_schema=_build_reconfigure_schema(entry),
                     errors=errors,
                     description_placeholders={
-                        "url_block": _build_urls_text(local_url, external_url),
+                        "url_block": _build_urls_text(local_url, external_url, path),
                     },
                 )
 
@@ -232,7 +236,7 @@ class ICalendarConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="reconfigure",
             data_schema=_build_reconfigure_schema(entry),
             description_placeholders={
-                "url_block": _build_urls_text(local_url, external_url),
+                "url_block": _build_urls_text(local_url, external_url, path),
             },
         )
 
@@ -249,7 +253,7 @@ class ICalendarOptionsFlow(config_entries.OptionsFlow):
         """Manage options."""
         errors: dict[str, str] = {}
         existing_secret = self.config_entry.data.get(CONF_SECRET, "")
-        local_url, external_url = _build_feed_urls(
+        local_url, external_url, path = _build_feed_urls(
             self.hass, self.config_entry.entry_id, existing_secret
         )
         if user_input is not None:
@@ -270,7 +274,7 @@ class ICalendarOptionsFlow(config_entries.OptionsFlow):
                     data_schema=_build_options_schema(self.config_entry),
                     errors=errors,
                     description_placeholders={
-                        "url_block": _build_urls_text(local_url, external_url),
+                        "url_block": _build_urls_text(local_url, external_url, path),
                     },
                 )
 
@@ -299,7 +303,7 @@ class ICalendarOptionsFlow(config_entries.OptionsFlow):
             step_id="init",
             data_schema=_build_options_schema(self.config_entry),
             description_placeholders={
-                "url_block": _build_urls_text(local_url, external_url),
+                "url_block": _build_urls_text(local_url, external_url, path),
             },
         )
 
